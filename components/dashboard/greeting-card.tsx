@@ -33,11 +33,15 @@ export function GreetingCard({ userName }: GreetingCardProps) {
     else setGreeting("Selamat Malam");
   }, []);
 
+  // Get first name only
+  const firstName = userName?.split(' ')[0] || '';
+  const displayName = firstName ? `, ${firstName}` : '';
+
   return (
     <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-none shadow-lg">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl md:text-2xl font-bold">
-          {greeting}, {userName}! 👋
+          {greeting}{displayName}! 👋
         </CardTitle>
         <CardDescription className="text-blue-100 text-sm md:text-base">
           {quote}

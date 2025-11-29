@@ -14,7 +14,7 @@ export function BalanceCard({ totalBalance, lowBalanceThreshold = 500000 }: Bala
 
   return (
     <Card className={cn(
-      "transition-colors duration-300 shadow-sm",
+      "transition-colors duration-300 shadow-sm h-full",
       isLowBalance ? "bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900" : ""
     )}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -33,7 +33,7 @@ export function BalanceCard({ totalBalance, lowBalanceThreshold = 500000 }: Bala
         </div>
         {isLowBalance && (
           <p className="text-xs text-red-500 mt-1 font-medium">
-            ⚠️ Peringatan Saldo Rendah! (Di bawah Rp {lowBalanceThreshold.toLocaleString("id-ID")})
+            ⚠️ Saldo Rendah! (Di bawah Rp {lowBalanceThreshold.toLocaleString("id-ID")})
           </p>
         )}
         {!isLowBalance && (
