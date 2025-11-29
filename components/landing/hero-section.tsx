@@ -54,7 +54,7 @@ export function HeroSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-4"
           >
-            <Link href="/auth/signup">
+            <Link href="/auth/sign-up">
               <Button size="lg" className="group relative overflow-hidden">
                 <span className="relative z-10 flex items-center gap-2">
                   Mulai Gratis

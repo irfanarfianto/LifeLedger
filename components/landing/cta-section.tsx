@@ -45,7 +45,7 @@ export function CTASection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Link href="/auth/signup">
+            <Link href="/auth/sign-up">
               <Button size="lg" className="group relative overflow-hidden px-8">
                 <span className="relative z-10 flex items-center gap-2">
                   Mulai Sekarang
