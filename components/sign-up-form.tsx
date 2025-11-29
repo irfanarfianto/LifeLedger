@@ -109,7 +109,7 @@ export function SignUpForm({
             <div className="mt-4 text-center text-sm">
               Sudah punya akun?{" "}
               <Link href="/auth/login" className="underline underline-offset-4">
-                Masuk
+                Login
               </Link>
             </div>
           </form>

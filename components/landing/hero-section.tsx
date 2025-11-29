@@ -65,7 +65,7 @@ export function HeroSection() {
             </Link>
             <Link href="/auth/login">
               <Button size="lg" variant="outline" className="border-primary/20 hover:bg-primary/5">
-                Masuk
+                Login
               </Button>
             </Link>
           </motion.div>
