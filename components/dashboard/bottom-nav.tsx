@@ -1,40 +1,37 @@
 "use client";
 
+import {
+  Calendar,
+  LayoutDashboard,
+  Settings,
+  Wallet,
+  CheckSquare,
+  Menu,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  Calendar,
-  Wallet,
-  CheckSquare,
-  Settings,
-} from "lucide-react";
 
-const navItems = [
+const items = [
   {
-    title: "Home",
-    href: "/dashboard",
+    title: "Dashboard",
+    url: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Calendar",
-    href: "/dashboard/calendar",
-    icon: Calendar,
-  },
-  {
-    title: "Finance",
-    href: "/dashboard/finance",
+    title: "Keuangan",
+    url: "/dashboard/finance",
     icon: Wallet,
   },
   {
-    title: "Planner",
-    href: "/dashboard/planner",
+    title: "Tugas",
+    url: "/dashboard/tasks",
     icon: CheckSquare,
   },
+  
   {
-    title: "Settings",
-    href: "/dashboard/settings",
+    title: "Pengaturan",
+    url: "/dashboard/settings",
     icon: Settings,
   },
 ];
@@ -43,24 +40,25 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full border-t bg-background md:hidden">
-      <nav className="flex h-16 items-center justify-around px-2">
-        {navItems.map((item) => (
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t bg-background px-4 pb-safe md:hidden">
+      {items.map((item) => {
+        const isActive = pathname === item.url;
+        return (
           <Link
-            key={item.href}
-            href={item.href}
+            key={item.title}
+            href={item.url}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 rounded-lg px-2 py-1 transition-all hover:text-primary",
-              pathname === item.href
+              "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors",
+              isActive
                 ? "text-primary"
-                : "text-muted-foreground"
+                : "text-muted-foreground hover:text-primary"
             )}
           >
-            <item.icon className="h-5 w-5" />
-            <span className="text-[10px] font-medium">{item.title}</span>
+            <item.icon className={cn("h-5 w-5", isActive && "fill-current")} />
+            <span>{item.title}</span>
           </Link>
-        ))}
-      </nav>
+        );
+      })}
     </div>
   );
 }

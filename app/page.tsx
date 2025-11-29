@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { FeaturesGrid } from "@/components/landing/features-grid";
 import { PersonaSection } from "@/components/landing/persona-section";
 import { CTASection } from "@/components/landing/cta-section";
+import { Footer } from "@/components/landing/footer";
 
 export default function Home() {
   return (
@@ -12,15 +13,7 @@ export default function Home() {
       <FeaturesGrid />
       <PersonaSection />
       <CTASection />
-      <footer className="w-full py-6 bg-background border-t">
-        <div className="container px-4 md:px-6 mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} LifeLedger. All rights reserved.</p>
-          <div className="flex gap-4">
-            <a href="#" className="hover:underline">Privacy Policy</a>
-            <a href="#" className="hover:underline">Terms of Service</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

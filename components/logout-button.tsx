@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -40,7 +40,7 @@ export function LogoutButton() {
       router.push("/");
     } catch (error: unknown) {
       console.error("Logout error:", error);
-      toast.error("Failed to logout. Please try again.");
+      toast.error("Gagal keluar. Silakan coba lagi."); // Translated toast message
       setIsLoading(false);
     }
   };
@@ -48,25 +48,36 @@ export function LogoutButton() {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Logout</Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="mr-2 h-4 w-4" />
+          )}
+          Keluar
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
+          <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
           <AlertDialogDescription>
-            You will be redirected to the landing page.
+            Anda akan keluar dari sesi Anda saat ini.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={logout} disabled={isLoading}>
+          <AlertDialogCancel disabled={isLoading}>Batal</AlertDialogCancel>
+          <AlertDialogAction onClick={logout} disabled={isLoading} className="bg-red-500 hover:bg-red-600">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Logging out...
+                Keluar...
               </>
             ) : (
-              "Continue"
+              "Keluar"
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

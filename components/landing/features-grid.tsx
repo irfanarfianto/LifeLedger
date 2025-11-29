@@ -1,132 +1,107 @@
-import {
-  Calendar,
-  CreditCard,
-  Clock,
-  Trophy,
-  AlertTriangle,
-  PiggyBank,
-  Users,
-  Search,
-  LayoutGrid,
-  Timer,
-  FileText,
-  CheckSquare,
-} from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
+import { Wallet, Calendar, BarChart3, Settings, Target, TrendingUp } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const features = [
   {
-    category: "Hybrid (Money x Time)",
-    items: [
-      {
-        icon: Calendar,
-        title: "Cost of Event",
-        description: "Link expenses directly to your calendar events. See the real cost of your activities.",
-      },
-      {
-        icon: CreditCard,
-        title: "Subscription Manager",
-        description: "Visualize recurring bills on your calendar. Never miss a payment again.",
-      },
-      {
-        icon: Clock,
-        title: "Time is Money",
-        description: "Calculate your hourly rate and see the cost of procrastination.",
-      },
-      {
-        icon: Trophy,
-        title: "Productivity Rewards",
-        description: "Unlock budget for entertainment when you complete high-priority tasks.",
-      },
-    ],
+    icon: Wallet,
+    title: "Manajemen Keuangan",
+    description: "Lacak pemasukan, pengeluaran, dan kelola berbagai dompet dalam satu tempat.",
+    gradient: "from-blue-500 to-cyan-500"
   },
   {
-    category: "Finance",
-    items: [
-      {
-        icon: AlertTriangle,
-        title: "Low Balance Alert",
-        description: "Get warned when your wallet is running low. Switch to 'Economy Mode' automatically.",
-      },
-      {
-        icon: PiggyBank,
-        title: "Smart Wishlist",
-        description: "Track savings goals with daily calculation to reach your target.",
-      },
-      {
-        icon: Users,
-        title: "Split Bill",
-        description: "Manage shared expenses and debts with friends easily.",
-      },
-      {
-        icon: Search,
-        title: "Leak Detector",
-        description: "Identify small, frequent expenses that are draining your wallet.",
-      },
-    ],
+    icon: Calendar,
+    title: "Perencana & Tugas",
+    description: "Rencanakan hari Anda dengan kalender dan Eisenhower Matrix yang powerful.",
+    gradient: "from-purple-500 to-pink-500"
   },
   {
-    category: "Productivity",
-    items: [
-      {
-        icon: LayoutGrid,
-        title: "Eisenhower Matrix",
-        description: "Auto-sort tasks by urgency and importance. Focus on what matters.",
-      },
-      {
-        icon: Timer,
-        title: "Focus Timer",
-        description: "Integrated Pomodoro timer to boost your concentration.",
-      },
-      {
-        icon: FileText,
-        title: "Brain Dump",
-        description: "Capture ideas quickly and convert them to tasks later.",
-      },
-      {
-        icon: CheckSquare,
-        title: "Habit Tracker",
-        description: "Build good habits with daily checklists and streak tracking.",
-      },
-    ],
+    icon: BarChart3,
+    title: "Analitik Mendalam",
+    description: "Dapatkan insight tentang pola keuangan dan produktivitas Anda.",
+    gradient: "from-orange-500 to-red-500"
   },
+  {
+    icon: Target,
+    title: "Wishlist & Goals",
+    description: "Catat keinginan dan lacak progress menabung untuk mencapai target.",
+    gradient: "from-green-500 to-emerald-500"
+  },
+  {
+    icon: TrendingUp,
+    title: "Pomodoro Timer",
+    description: "Tingkatkan fokus dengan teknik Pomodoro yang terbukti efektif.",
+    gradient: "from-yellow-500 to-orange-500"
+  },
+  {
+    icon: Settings,
+    title: "Persona Adaptif",
+    description: "Fitur yang menyesuaikan dengan role Anda: Mahasiswa, Pekerja, atau Freelancer.",
+    gradient: "from-indigo-500 to-purple-500"
+  }
 ];
 
 export function FeaturesGrid() {
   return (
-    <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
-      <div className="container px-4 md:px-6 mx-auto">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-            Powerful Features
+    <section className="w-full py-24 md:py-32 bg-background relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+      
+      <div className="container px-4 md:px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center space-y-4 mb-16"
+        >
+          <h2 className="text-3xl md:text-5xl font-bold">
+            Fitur{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+              Lengkap
+            </span>
           </h2>
-          <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-            Everything you need to manage your life, finances, and time in one place.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Semua yang Anda butuhkan dalam satu aplikasi
           </p>
-        </div>
-        
-        <div className="space-y-16">
-          {features.map((section, index) => (
-            <div key={index} className="space-y-8">
-              <h3 className="text-2xl font-bold text-center md:text-left border-b pb-2">
-                {section.category}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {section.items.map((item, itemIndex) => (
-                  <div
-                    key={itemIndex}
-                    className="flex flex-col items-center md:items-start space-y-4 p-6 bg-background rounded-lg border shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="p-3 rounded-full bg-primary/10 text-primary">
-                      <item.icon className="h-6 w-6" />
-                    </div>
-                    <h4 className="text-xl font-bold">{item.title}</h4>
-                    <p className="text-muted-foreground text-center md:text-left">
-                      {item.description}
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="group relative overflow-hidden p-6 h-full border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                <div className="relative z-10 space-y-4">
+                  {/* Icon with gradient */}
+                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.gradient} shadow-lg`}>
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {feature.description}
                     </p>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+
+                {/* Decorative corner */}
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>
