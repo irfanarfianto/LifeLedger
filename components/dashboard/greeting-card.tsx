@@ -20,17 +20,29 @@ interface GreetingCardProps {
 export function GreetingCard({ userName }: GreetingCardProps) {
   const [quote, setQuote] = useState("");
   const [greeting, setGreeting] = useState("");
+  // 1. Tambahkan state untuk tanggal
+  const [dateString, setDateString] = useState("");
 
   useEffect(() => {
     // Set random quote
     setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
 
     // Set greeting based on time
-    const hour = new Date().getHours();
+    const now = new Date(); // Ambil waktu sekali saja biar konsisten
+    const hour = now.getHours();
+    
     if (hour < 11) setGreeting("Selamat Pagi");
     else if (hour < 15) setGreeting("Selamat Siang");
     else if (hour < 18) setGreeting("Selamat Sore");
     else setGreeting("Selamat Malam");
+
+    // 2. Set tanggal hanya di dalam useEffect (Client Side)
+    setDateString(now.toLocaleDateString("id-ID", { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }));
   }, []);
 
   // Get first name only
@@ -49,7 +61,8 @@ export function GreetingCard({ userName }: GreetingCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-xs md:text-sm text-blue-200 font-medium">
-          {new Date().toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          {/* 3. Render state variable, bukan new Date() langsung */}
+          {dateString}
         </p>
       </CardContent>
     </Card>

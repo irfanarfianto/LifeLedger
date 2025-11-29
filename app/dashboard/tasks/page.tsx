@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server"; // ⬅️ tambah ini
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarView } from "@/components/planner/calendar-view";
 import { EisenhowerMatrix } from "@/components/planner/eisenhower-matrix";
@@ -10,7 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 async function PlannerContent() {
-  const today = new Date().toISOString().split('T')[0];
+  // 👇 kasih tahu Next ini harus dievaluasi di request-time
+  await connection();
+
+  const today = new Date().toISOString().split("T")[0];
+
   const [tasks, habits, todayLogs] = await Promise.all([
     getTasks(),
     getHabits(),
@@ -28,17 +33,19 @@ async function PlannerContent() {
                 <TabsTrigger value="matrix">Eisenhower Matrix</TabsTrigger>
               </TabsList>
             </div>
-            <TaskDialog trigger={
-              <Button size="sm" className="w-full sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" /> Tugas Baru
-              </Button>
-            } />
+            <TaskDialog
+              trigger={
+                <Button size="sm" className="w-full sm:w-auto">
+                  <Plus className="mr-2 h-4 w-4" /> Tugas Baru
+                </Button>
+              }
+            />
           </div>
-          
+
           <TabsContent value="calendar" className="mt-0">
             <CalendarView tasks={tasks} />
           </TabsContent>
-          
+
           <TabsContent value="matrix" className="mt-0 h-[600px]">
             <EisenhowerMatrix tasks={tasks} />
           </TabsContent>
