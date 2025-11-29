@@ -1,0 +1,129 @@
+---
+# 📋 Spesifikasi Fitur
+
+Dokumen ini berisi logika bisnis, aturan main, dan spesifikasi detail untuk setiap fitur di **LifeLedger**. Dokumen ini menjadi acuan utama (Single Source of Truth) saat proses coding.
+
+---
+
+## 1. 🌟 Fitur Hybrid (Money x Time)
+*Fitur unggulan yang menghubungkan data keuangan dan produktivitas.*
+
+### A. Cost of Event (Anggaran per Kegiatan)
+Menghubungkan pengeluaran langsung ke jadwal kalender.
+- **User Story:** "Sebagai user, saya ingin tahu berapa total uang yang saya habiskan untuk event 'Liburan ke Jogja'."
+- **Logika Sistem:**
+    1.  User membuat Event di Kalender (Tabel `tasks`, `is_event = true`).
+    2.  User dapat menetapkan `budget_limit` pada event tersebut.
+    3.  Saat input Transaksi (`transactions`), user memilih opsi **"Link to Event"**.
+    4.  Sistem menjumlahkan semua transaksi dengan `related_task_id` yang sama.
+- **UI Component:** Progress Bar di detail Event (Realita vs Budget).
+
+### B. Subscription Manager (Manajemen Langganan)
+Visualisasi tagihan rutin di dalam kalender.
+- **User Story:** "Saya ingin diingatkan sebelum Netflix autodebet agar saldo cukup."
+- **Logika Sistem:**
+    -   Tabel `subscriptions` menyimpan tanggal tagihan (`due_date_day`).
+    -   **Auto-Generate:** Sistem otomatis memunculkan "Ghost Task" di kalender setiap bulan sesuai tanggal tersebut.
+    -   **Action:** Jika user menandai "Paid", sistem otomatis membuat record di tabel `transactions` (Expense).
+
+### C. "Time is Money" Calculator
+Fitur penyadaran nilai waktu (Khusus Freelancer/Worker).
+- **User Story:** "Saya ingin tahu berapa nilai waktu saya per jam."
+- **Formula:**
+    $$\text{Hourly Rate} = \frac{\text{Monthly Income}}{\text{Work Days} \times \text{Work Hours}}$$
+- **Trigger:** Jika user menunda task (procrastinate) > 2 jam.
+- **Alert:** "Awas! Kamu baru saja membuang potensi pendapatan seharga **Rp [Hourly Rate x 2]**."
+
+### D. Productivity Reward System
+Gamifikasi untuk memotivasi penyelesaian tugas.
+- **Logika:**
+    -   Jika `All High Priority Tasks` statusnya `Done` hari ini.
+    -   **Reward:** Unlock kategori budget `Hiburan` atau `Jajan` (Visual effect: Confetti 🎉).
+    -   **Message:** "Kerja bagus! Kamu berhak beli kopi mahal hari ini."
+
+---
+
+## 2. 💰 Fitur Keuangan (Finance)
+
+### A. Mode "Dompet Menipis" (Low Balance Alert)
+Peringatan dini kesehatan finansial.
+- **Config:** User set ambang batas (misal: Rp 100.000).
+- **Trigger:** Jika `wallets.current_balance` < Ambang Batas.
+- **UI Changes:**
+    -   Tema aplikasi berubah aksen menjadi **Merah / Oranye**.
+    -   Dashboard menampilkan banner: *"Mode Hemat Aktif! Hindari pengeluaran tersier."*
+
+### B. Wishlist dengan Progress Bar
+Simulasi tabungan target.
+- **Input:** Harga Barang, Target Tanggal.
+- **Kalkulasi Harian:**
+    $$\text{Daily Save} = \frac{\text{Harga} - \text{Terkumpul}}{\text{Sisa Hari}}$$
+- **Display:** "Nabunglah **Rp 15.000/hari** agar kebeli HP bulan depan."
+
+### C. Split Bill (Patungan & Piutang)
+Manajemen utang-piutang teman.
+- **Flow:**
+    1.  User input Expense total (misal: Rp 100rb).
+    2.  Pilih opsi **Split Bill**.
+    3.  Input nama teman & nominal (misal: Andi 50rb).
+- **Backend:**
+    -   Catat Expense User: Rp 50rb (Porsi sendiri).
+    -   Catat Debt (Piutang): Rp 50rb (Atas nama Andi).
+
+### D. Laporan "Bocor Halus"
+Mendeteksi pengeluaran kecil yang sering.
+- **Algoritma:** Cari kategori transaksi dengan:
+    -   Nominal < Rp 20.000.
+    -   Frekuensi > 10x per bulan.
+- **Insight:** "Biaya Admin & Parkir kamu bulan ini totalnya **Rp 300.000**. Bisa buat beli kuota setahun!"
+
+---
+
+## 3. 📅 Fitur Produktivitas (Planner)
+
+### A. Eisenhower Matrix (Prioritas Otomatis)
+Sorting tugas berdasarkan urgensi.
+- **Tampilan:** 4 Kuadran (Grid 2x2).
+    1.  **Do First:** Penting & Mendesak (H-1 Deadline).
+    2.  **Schedule:** Penting & Tidak Mendesak.
+    3.  **Delegate:** Tidak Penting & Mendesak.
+    4.  **Eliminate:** Tidak Penting & Tidak Mendesak.
+
+### B. Focus Timer (Pomodoro)
+Alat bantu fokus terintegrasi.
+- **Fitur:** Timer 25 menit (Kerja) - 5 menit (Istirahat).
+- **Integrasi:** Saat timer aktif, status user menjadi "Focusing" dan notifikasi non-esensial ditahan (jika memungkinkan via Browser API).
+
+### C. Brain Dump Area
+Tempat penampungan ide mentah.
+- **UI:** Textarea simpel seperti Notepad.
+- **Action:** Select text -> Klik kanan "Convert to Task" -> Masuk ke Inbox Planner.
+
+### D. Habit Tracker
+- **Format:** Checklist harian (Boolean).
+- **Streak:** Menghitung berapa hari berturut-turut user melakukan kebiasaan tersebut.
+
+---
+
+## 4. 👤 Fitur Berdasarkan Persona
+
+### A. Mahasiswa 🎓
+- **Semester Budget:**
+    -   Input total uang saku per semester.
+    -   Sistem membagi rata menjadi limit bulanan.
+- **Assignment Tracker:**
+    -   Input tipe tugas: Quiz, Makalah, Ujian.
+    -   Sortir otomatis berdasarkan bobot nilai (jika user input bobot).
+
+### B. Pekerja / Professional 💼
+- **Reimbursement Flag:**
+    -   Checkbox pada transaksi: `[x] Reimbursable (Klaim Kantor)`.
+    -   **Logika:** Transaksi ini **TIDAK** mengurangi perhitungan "Pengeluaran Pribadi" di laporan bulanan, tapi tetap mengurangi saldo dompet sementara.
+- **Slip Gaji Checker:**
+    -   Form input: Gaji Pokok, Tunjangan, Potongan (Pajak/BPJS).
+    -   Validasi: Memastikan gaji bersih yang masuk ke rekening sesuai perhitungan.
+
+---
+
+> [!TIP] Catatan Pengembang
+> Prioritaskan pengembangan fitur **Hybrid** dan **Finance Core** terlebih dahulu sebagai MVP (Minimum Viable Product). Fitur Persona bisa ditambahkan pada update v1.1.
