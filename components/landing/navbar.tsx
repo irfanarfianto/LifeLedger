@@ -15,7 +15,7 @@ export function Navbar() {
           <ThemeSwitcher />
           <Link href="/auth/login">
             <Button variant="default" size="sm">
-              Login
+              Masuk
             </Button>
           </Link>
         </div>
