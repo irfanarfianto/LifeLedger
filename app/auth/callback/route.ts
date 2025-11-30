@@ -26,9 +26,19 @@ export async function GET(request: Request) {
       } else {
         return NextResponse.redirect(`${origin}${next}`)
       }
+    } else {
+      console.error('Auth callback error:', error)
+      return NextResponse.redirect(`${origin}/auth/error?error=${encodeURIComponent(error.message)}`)
     }
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/error`)
+  const errorCode = searchParams.get('error')
+  const errorDesc = searchParams.get('error_description')
+  
+  if (errorCode) {
+    return NextResponse.redirect(`${origin}/auth/error?error=${encodeURIComponent(errorCode)}&error_description=${encodeURIComponent(errorDesc || '')}`)
+  }
+
+  return NextResponse.redirect(`${origin}/auth/error?error=NoCodeProvided`)
 }
