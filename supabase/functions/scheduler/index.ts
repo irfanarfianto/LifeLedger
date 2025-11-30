@@ -1,11 +1,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { JWT } from 'npm:google-auth-library@9'
-// import serviceAccount from '../service-account.json' with { type: 'json' }
 
 // USE ENV VARS FOR PRODUCTION SECURITY
 const serviceAccount = {
   client_email: Deno.env.get('FIREBASE_CLIENT_EMAIL'),
-  private_key: Deno.env.get('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n'),
+  private_key: Deno.env.get('FIREBASE_PRIVATE_KEY'),
   project_id: Deno.env.get('FIREBASE_PROJECT_ID'),
 }
 
@@ -49,9 +48,9 @@ Deno.serve(async (req) => {
     // 3. Get FCM tokens for these users
     const userIds = [...new Set(reminders.map(r => r.user_id))];
     const { data: devices, error: deviceError } = await supabase
-      .from('user_devices')
-      .select('user_id, fcm_token')
-      .in('user_id', userIds);
+      .from('profiles')
+      .select('id, fcm_token')
+      .in('id', userIds);
 
     if (deviceError) throw deviceError;
 
@@ -66,11 +65,13 @@ Deno.serve(async (req) => {
       clientEmail: serviceAccount.client_email!,
       privateKey: serviceAccount.private_key!,
     });
-
+  console.log("Service Account Email:", serviceAccount.client_email);
+  console.log("Service Account Private Key:", serviceAccount.private_key);
+  console.log("Service Account Project ID:", serviceAccount.project_id);
     const results = [];
 
     for (const reminder of reminders) {
-      const userDevices = devices.filter(d => d.user_id === reminder.user_id);
+      const userDevices = devices.filter(d => d.id === reminder.user_id);
       
       for (const device of userDevices) {
         try {

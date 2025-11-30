@@ -8,26 +8,17 @@ export async function saveFCMToken(token: string) {
 
   if (!user) return;
 
-  // Check if token already exists for this user
-  const { data: existingToken } = await supabase
-    .from("user_devices")
-    .select("id")
-    .eq("user_id", user.id)
-    .eq("fcm_token", token)
-    .single();
+  // Update fcm_token in profiles table
+  const { error } = await supabase
+    .from("profiles")
+    .update({ fcm_token: token })
+    .eq("id", user.id);
 
-  if (existingToken) {
-    // Update last active
-    await supabase
-      .from("user_devices")
-      .update({ last_active_at: new Date().toISOString() })
-      .eq("id", existingToken.id);
+    console.log("FCM Token saved to profiles for user:", user.id);
+
+  if (error) {
+    console.error("Error saving FCM token to profiles:", error);
   } else {
-    // Insert new token
-    await supabase.from("user_devices").insert({
-      user_id: user.id,
-      fcm_token: token,
-      device_type: "web", // Default to web for now
-    });
+    console.log("FCM Token saved to profiles for user:", user.id);
   }
 }

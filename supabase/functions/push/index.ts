@@ -1,10 +1,9 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { JWT } from 'npm:google-auth-library@9'
-// import serviceAccount from '../service-account.json' with { type: 'json' }
 
 const serviceAccount = {
   client_email: Deno.env.get('FIREBASE_CLIENT_EMAIL'),
-  private_key: Deno.env.get('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n'),
+  private_key: Deno.env.get('FIREBASE_PRIVATE_KEY'),
   project_id: Deno.env.get('FIREBASE_PROJECT_ID'),
 }
 
@@ -34,12 +33,18 @@ Deno.serve(async (req) => {
     .eq('id', payload.record.user_id)
     .single()
 
+  console.log("FCM Token:", data!.fcm_token);
+
   const fcmToken = data!.fcm_token as string
 
   const accessToken = await getAccessToken({
     clientEmail: serviceAccount.client_email,
     privateKey: serviceAccount.private_key,
   })
+
+  console.log("Service Account Email:", serviceAccount.client_email);
+  console.log("Service Account Private Key:", serviceAccount.private_key);
+  console.log("Service Account Project ID:", serviceAccount.project_id);
 
   const res = await fetch(
     `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
