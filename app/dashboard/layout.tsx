@@ -2,7 +2,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { BottomNav } from "@/components/dashboard/bottom-nav";
 import { MobileHeader } from "@/components/dashboard/mobile-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { FCMInitializer } from "@/components/fcm-initializer";
 
 export default function DashboardLayout({
   children,
@@ -11,7 +10,6 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <FCMInitializer />
       <AppSidebar />
       <SidebarInset>
         <MobileHeader />

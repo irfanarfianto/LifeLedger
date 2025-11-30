@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  
+  // Debug logging
+  const cookieStore = await cookies()
+  const allCookies = cookieStore.getAll()
+  console.log('Callback Cookies:', allCookies.map(c => c.name).join(', '))
+  
   // if "next" is in param, use it as the redirect URL
   let next = searchParams.get('next') ?? '/'
   
