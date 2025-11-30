@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Trash2, Clock, Bell } from "lucide-react";
 import { toast } from "sonner";
-import { createReminder, deleteReminder, getReminders, toggleReminder, type SavingsReminder } from "@/lib/actions/reminders";
+import { createReminder, deleteReminder, toggleReminder, type SavingsReminder } from "@/lib/actions/reminders";
 
 const DAYS = [
   { label: "Min", value: 0 },
@@ -28,28 +29,30 @@ const DAYS = [
 ];
 
 export function ReminderSettings({ initialReminders }: { initialReminders: SavingsReminder[] }) {
+  const router = useRouter();
   const [reminders, setReminders] = useState(initialReminders);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [newTime, setNewTime] = useState("08:00");
   const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
   const [title, setTitle] = useState("Waktunya Menabung! 💰");
 
   const handleCreate = async () => {
+    setIsLoading(true);
     try {
       await createReminder({
         reminder_time: newTime,
-        days: selectedDays,
+        days: selectedDays.sort((a, b) => a - b),
         title,
         body: "Sisihkan sedikit rezekimu untuk masa depan.",
       });
       toast.success("Pengingat berhasil dibuat");
       setIsDialogOpen(false);
-      // Refresh local state (optimistic or re-fetch)
-      // For simplicity, we rely on parent re-render or router refresh if implemented, 
-      // but here we might need to manually update or use router.refresh()
-      window.location.reload(); 
+      router.refresh();
     } catch (error) {
       toast.error("Gagal membuat pengingat");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,6 +61,7 @@ export function ReminderSettings({ initialReminders }: { initialReminders: Savin
       await toggleReminder(id, !currentStatus);
       setReminders(reminders.map(r => r.id === id ? { ...r, is_active: !currentStatus } : r));
       toast.success("Status pengingat diperbarui");
+      router.refresh();
     } catch (error) {
       toast.error("Gagal memperbarui status");
     }
@@ -68,6 +72,7 @@ export function ReminderSettings({ initialReminders }: { initialReminders: Savin
       await deleteReminder(id);
       setReminders(reminders.filter(r => r.id !== id));
       toast.success("Pengingat dihapus");
+      router.refresh();
     } catch (error) {
       toast.error("Gagal menghapus pengingat");
     }
@@ -133,7 +138,9 @@ export function ReminderSettings({ initialReminders }: { initialReminders: Savin
                   ))}
                 </div>
               </div>
-              <Button onClick={handleCreate} className="w-full">Simpan</Button>
+              <Button onClick={handleCreate} className="w-full" disabled={isLoading}>
+                {isLoading ? "Menyimpan..." : "Simpan"}
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -156,7 +163,7 @@ export function ReminderSettings({ initialReminders }: { initialReminders: Savin
                   <p className="text-sm text-muted-foreground">
                     {reminder.days.length === 7 
                       ? "Setiap Hari" 
-                      : reminder.days.map(d => DAYS.find(day => day.value === d)?.label).join(", ")}
+                      : reminder.days.sort((a, b) => a - b).map(d => DAYS.find(day => day.value === d)?.label).join(", ")}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{reminder.title}</p>
                 </div>

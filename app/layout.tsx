@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import { FCMInitializer } from "@/components/fcm-initializer";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -40,6 +41,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <FCMInitializer />
         </ThemeProvider>
       </body>
     </html>
