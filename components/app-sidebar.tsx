@@ -24,6 +24,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
+import { ThemeToggle } from "@/components/theme-toggle";
+
 // Menu items.
 const items = [
   {
@@ -88,10 +90,14 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4">
-       <p className="text-xs text-muted-foreground">
-         &copy; 2025 LifeLedger. All rights reserved.
-       </p>
+      <SidebarFooter className="p-4 space-y-4">
+        <div className="flex items-center justify-between p-2 border rounded-lg bg-sidebar-accent/50">
+          <span className="text-sm font-medium px-2">Tema</span>
+          <ThemeToggle />
+        </div>
+        <p className="text-xs text-muted-foreground text-center">
+          &copy; 2025 LifeLedger. All rights reserved.
+        </p>
       </SidebarFooter>
     </Sidebar>
   );
