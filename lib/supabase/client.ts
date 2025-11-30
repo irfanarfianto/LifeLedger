@@ -7,7 +7,7 @@ export function createClient() {
     {
       cookieOptions: {
         name: 'sb',
-        lifetime: 60 * 60 * 8,
+        maxAge: 60 * 60 * 8,
         domain: '',
         path: '/',
         sameSite: 'lax',
