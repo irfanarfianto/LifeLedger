@@ -1,7 +1,8 @@
 "use client";
 
-import { Wishlist } from "@/lib/actions/finance";
+import { Wishlist, Wallet } from "@/lib/actions/finance";
 import { CreateWishlistDialog } from "./create-wishlist-dialog";
+import { AddSavingsDialog } from "./add-savings-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { differenceInDays } from "date-fns";
@@ -9,9 +10,10 @@ import { Target } from "lucide-react";
 
 interface WishlistTabProps {
   wishlists: Wishlist[];
+  wallets: Wallet[];
 }
 
-export function WishlistTab({ wishlists }: WishlistTabProps) {
+export function WishlistTab({ wishlists, wallets }: WishlistTabProps) {
   const calculateDailySaving = (targetAmount: number, savedAmount: number, targetDate: string | null) => {
     if (!targetDate) return null;
     
@@ -39,6 +41,7 @@ export function WishlistTab({ wishlists }: WishlistTabProps) {
           wishlists.map((item) => {
             const progress = Math.min(100, (item.saved_amount / item.target_amount) * 100);
             const dailySaving = calculateDailySaving(item.target_amount, item.saved_amount, item.target_date);
+            const isCompleted = item.saved_amount >= item.target_amount;
 
             return (
               <Card key={item.id}>
@@ -59,15 +62,25 @@ export function WishlistTab({ wishlists }: WishlistTabProps) {
                     </div>
                     <Progress value={progress} className="h-2" />
                     
-                    {dailySaving !== null && dailySaving > 0 && (
+                    {dailySaving !== null && dailySaving > 0 && !isCompleted && (
                       <p className="text-xs text-blue-600 mt-2 font-medium">
                         Nabung Rp {dailySaving.toLocaleString("id-ID")}/hari lagi!
                       </p>
                     )}
-                    {dailySaving === 0 && (
+                    {isCompleted && (
                       <p className="text-xs text-green-600 mt-2 font-medium">
                         Target tercapai! 🎉
                       </p>
+                    )}
+                    
+                    {!isCompleted && (
+                      <AddSavingsDialog
+                        wishlistId={item.id}
+                        wishlistName={item.item_name}
+                        currentSaved={item.saved_amount}
+                        targetAmount={item.target_amount}
+                        wallets={wallets}
+                      />
                     )}
                   </div>
                 </CardContent>

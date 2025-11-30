@@ -8,11 +8,15 @@ import { getUserProfile } from "@/lib/actions/profile";
 import { getCategories, getSubscriptions } from "@/lib/actions/finance";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { ReminderSettings } from "@/components/settings/reminder-settings";
+import { getReminders } from "@/lib/actions/reminders";
+
 async function SettingsContent() {
-  const [profile, categories, subscriptions] = await Promise.all([
+  const [profile, categories, subscriptions, reminders] = await Promise.all([
     getUserProfile(),
     getCategories(),
     getSubscriptions(),
+    getReminders(),
   ]);
 
   return (
@@ -20,6 +24,7 @@ async function SettingsContent() {
       <div className="w-full overflow-x-auto pb-2">
         <TabsList className="w-full justify-start inline-flex min-w-max">
           <TabsTrigger value="profile">Profil & Persona</TabsTrigger>
+          <TabsTrigger value="reminders">Pengingat</TabsTrigger>
           <TabsTrigger value="categories">Kategori</TabsTrigger>
           <TabsTrigger value="subscriptions">Langganan</TabsTrigger>
           <TabsTrigger value="account">Akun</TabsTrigger>
@@ -28,6 +33,10 @@ async function SettingsContent() {
       
       <TabsContent value="profile">
         <ProfileSettings profile={profile} />
+      </TabsContent>
+
+      <TabsContent value="reminders">
+        <ReminderSettings initialReminders={reminders} />
       </TabsContent>
       
       <TabsContent value="categories">

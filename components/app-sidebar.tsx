@@ -23,7 +23,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { LogoutButton } from "@/components/logout-button";
 
 // Menu items.
 const items = [
@@ -90,7 +89,9 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-4">
-        <LogoutButton />
+       <p className="text-xs text-muted-foreground">
+         &copy; 2025 LifeLedger. All rights reserved.
+       </p>
       </SidebarFooter>
     </Sidebar>
   );

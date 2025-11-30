@@ -319,6 +319,65 @@ export async function deleteWishlist(id: string) {
   revalidatePath("/dashboard/finance");
 }
 
+export async function saveForWishlist(wishlistId: string, amount: number, walletId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("User not authenticated");
+
+  // 1. Deduct from wallet
+  const { data: wallet, error: walletFetchError } = await supabase
+    .from("wallets")
+    .select("current_balance")
+    .eq("id", walletId)
+    .single();
+
+  if (walletFetchError || !wallet) throw new Error("Wallet not found");
+
+  if (wallet.current_balance < amount) {
+    throw new Error("Insufficient funds in wallet");
+  }
+
+  const { error: walletUpdateError } = await supabase
+    .from("wallets")
+    .update({ current_balance: wallet.current_balance - amount })
+    .eq("id", walletId);
+
+  if (walletUpdateError) throw new Error("Failed to update wallet balance");
+
+  // 2. Add to wishlist
+  const { data: wishlist, error: wishlistFetchError } = await supabase
+    .from("wishlists")
+    .select("saved_amount, item_name")
+    .eq("id", wishlistId)
+    .single();
+
+  if (wishlistFetchError || !wishlist) throw new Error("Wishlist not found");
+
+  const { error: wishlistUpdateError } = await supabase
+    .from("wishlists")
+    .update({ saved_amount: wishlist.saved_amount + amount })
+    .eq("id", wishlistId);
+
+  if (wishlistUpdateError) throw new Error("Failed to update wishlist progress");
+
+  // 3. Record transaction
+  const { error: transactionError } = await supabase.from("transactions").insert({
+    user_id: user.id,
+    amount,
+    transaction_type: "expense",
+    wallet_id: walletId,
+    category_id: null,
+    note: `Tabungan untuk wishlist: ${wishlist.item_name}`,
+    transaction_date: new Date().toISOString(),
+    is_reimbursable: false,
+  });
+
+  if (transactionError) console.error("Failed to record transaction history", transactionError);
+
+  revalidatePath("/dashboard/finance");
+}
+
 // --- Debts ---
 
 export type Debt = {

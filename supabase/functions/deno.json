@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true
+  },
+  "imports": {
+    "npm:@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2",
+    "npm:google-auth-library@9": "https://esm.sh/google-auth-library@9"
+  }
+}

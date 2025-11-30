@@ -33,7 +33,7 @@ async function FinanceContent() {
         <WalletsTab wallets={wallets} categories={categories} />
       </TabsContent>
       <TabsContent value="wishlist" className="space-y-4">
-        <WishlistTab wishlists={wishlists} />
+        <WishlistTab wishlists={wishlists} wallets={wallets} />
       </TabsContent>
       <TabsContent value="debts" className="space-y-4">
         <DebtsTab debts={debts} />
