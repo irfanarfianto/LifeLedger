@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: "LifeLedger",
   description: "Your personal finance and life manager",
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {

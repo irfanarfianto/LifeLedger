@@ -31,8 +31,17 @@ export function FCMInitializer() {
           // Register service worker explicitly
           if ('serviceWorker' in navigator) {
             try {
-              const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-              console.log('Service Worker registered with scope:', registration.scope);
+              let registration;
+              
+              if (process.env.NODE_ENV === 'development') {
+                // In dev, PWA is disabled, so we register the Firebase SW directly
+                registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+              } else {
+                // In prod, PWA is enabled, so we wait for the main SW (which imports Firebase SW)
+                registration = await navigator.serviceWorker.ready;
+              }
+
+              console.log('Service Worker used with scope:', registration.scope);
               
               const token = await getToken(msg, {
                 vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
