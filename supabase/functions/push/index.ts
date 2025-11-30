@@ -1,6 +1,12 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { JWT } from 'npm:google-auth-library@9'
-import serviceAccount from '../service-account.json' with { type: 'json' }
+// import serviceAccount from '../service-account.json' with { type: 'json' }
+
+const serviceAccount = {
+  client_email: Deno.env.get('FIREBASE_CLIENT_EMAIL'),
+  private_key: Deno.env.get('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n'),
+  project_id: Deno.env.get('FIREBASE_PROJECT_ID'),
+}
 
 interface Notification {
   id: string
