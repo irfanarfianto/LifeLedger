@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,9 @@ import {
 import { Plus, Trash2, Clock, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { createReminder, deleteReminder, toggleReminder, type SavingsReminder } from "@/lib/actions/reminders";
+import { messaging } from "@/lib/firebase/config";
+import { getToken } from "firebase/messaging";
+import { createClient } from "@/lib/supabase/client";
 
 const DAYS = [
   { label: "Min", value: 0 },
@@ -31,15 +34,65 @@ const DAYS = [
 export function ReminderSettings({ initialReminders }: { initialReminders: SavingsReminder[] }) {
   const router = useRouter();
   const [reminders, setReminders] = useState(initialReminders);
+  
+  // Sync state with props when router.refresh() updates the server data
+  useEffect(() => {
+    setReminders(initialReminders);
+  }, [initialReminders]);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [newTime, setNewTime] = useState("08:00");
   const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
   const [title, setTitle] = useState("Waktunya Menabung! 💰");
 
+  const initializeFCM = async () => {
+    try {
+      if (typeof window === "undefined" || !("Notification" in window)) return;
+
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        const msg = await messaging();
+        if (!msg) return;
+
+        let registration;
+        if ('serviceWorker' in navigator) {
+          if (process.env.NODE_ENV === 'development') {
+            registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+          } else {
+            registration = await navigator.serviceWorker.ready;
+          }
+
+          const token = await getToken(msg, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+            serviceWorkerRegistration: registration,
+          });
+
+          if (token) {
+            console.log("FCM Token generated manually:", token);
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+              await supabase
+                .from("profiles")
+                .upsert({ id: user.id, fcm_token: token }, { onConflict: "id" });
+              console.log("FCM Token saved manually");
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Manual FCM initialization failed:", error);
+    }
+  };
+
   const handleCreate = async () => {
     setIsLoading(true);
     try {
+      // Try to initialize FCM when creating a reminder
+      await initializeFCM();
+
       await createReminder({
         reminder_time: newTime,
         days: selectedDays.sort((a, b) => a - b),

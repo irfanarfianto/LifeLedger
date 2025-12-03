@@ -167,6 +167,54 @@ export async function deleteCategory(id: string) {
   revalidatePath("/dashboard/finance");
 }
 
+export async function createDefaultCategories() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("User not authenticated");
+
+  const defaultCategories = [
+    { name: "Gaji", type: "income", icon: "Wallet" },
+    { name: "Bonus", type: "income", icon: "Gift" },
+    { name: "Investasi", type: "income", icon: "TrendingUp" },
+    { name: "Makanan", type: "expense", icon: "Utensils" },
+    { name: "Transportasi", type: "expense", icon: "Car" },
+    { name: "Belanja", type: "expense", icon: "ShoppingBag" },
+    { name: "Hiburan", type: "expense", icon: "Film" },
+    { name: "Tagihan", type: "expense", icon: "FileText" },
+    { name: "Kesehatan", type: "expense", icon: "HeartPulse" },
+    { name: "Pendidikan", type: "expense", icon: "GraduationCap" },
+  ];
+
+  // Check existing categories to avoid duplicates
+  const { data: existing } = await supabase
+    .from("categories")
+    .select("name")
+    .eq("user_id", user.id);
+
+  const existingNames = new Set(existing?.map(c => c.name) || []);
+  
+  const newCategories = defaultCategories
+    .filter(c => !existingNames.has(c.name))
+    .map(c => ({
+      user_id: user.id,
+      name: c.name,
+      type: c.type,
+      icon: c.icon,
+      budget_limit: 0,
+    }));
+
+  if (newCategories.length > 0) {
+    const { error } = await supabase.from("categories").insert(newCategories);
+    if (error) {
+      console.error("Error creating default categories:", error);
+      throw new Error("Failed to create default categories");
+    }
+  }
+
+  revalidatePath("/dashboard/finance");
+}
+
 // --- Transactions ---
 
 export type Transaction = {

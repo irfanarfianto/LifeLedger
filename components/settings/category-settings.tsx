@@ -1,9 +1,9 @@
 "use client";
 
-import { Category, deleteCategory } from "@/lib/actions/finance";
+import { Category, deleteCategory, createDefaultCategories } from "@/lib/actions/finance";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Wand2 } from "lucide-react";
 import { CreateCategoryDialog } from "@/components/finance/create-category-dialog";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -14,6 +14,19 @@ interface CategorySettingsProps {
 
 export function CategorySettings({ categories }: CategorySettingsProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateDefaults = async () => {
+    setIsGenerating(true);
+    try {
+      await createDefaultCategories();
+      toast.success("Kategori default berhasil ditambahkan");
+    } catch (error) {
+      toast.error("Gagal menambahkan kategori default");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus kategori ini?")) return;
@@ -37,11 +50,19 @@ export function CategorySettings({ categories }: CategorySettingsProps) {
             Atur kategori pemasukan dan pengeluaran Anda.
           </CardDescription>
         </div>
-        <CreateCategoryDialog trigger={
-          <Button size="sm">
-            <Plus className="mr-2 h-4 w-4" /> Tambah
-          </Button>
-        } />
+        <div className="flex gap-2">
+          {categories.length === 0 && (
+            <Button size="sm" variant="outline" onClick={handleGenerateDefaults} disabled={isGenerating}>
+              <Wand2 className="mr-2 h-4 w-4" /> 
+              {isGenerating ? "Memproses..." : "Isi Default"}
+            </Button>
+          )}
+          <CreateCategoryDialog trigger={
+            <Button size="sm">
+              <Plus className="mr-2 h-4 w-4" /> Tambah
+            </Button>
+          } />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
