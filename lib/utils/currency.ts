@@ -19,3 +19,16 @@ export function formatRupiah(value: number | string): string {
 export function parseRupiah(value: string): number {
   return parseInt(value.replace(/[^0-9]/g, ""), 10) || 0;
 }
+
+export function formatCompactNumber(number: number): string {
+  if (number >= 1000000000) {
+    return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (number >= 1000000) {
+    return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'jt';
+  }
+  if (number >= 1000) {
+    return (number / 1000).toFixed(0) + 'rb';
+  }
+  return number.toString();
+}

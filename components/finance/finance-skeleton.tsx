@@ -3,46 +3,38 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function FinanceSkeleton() {
   return (
-    <div className="space-y-6">
-      {/* Tabs Skeleton */}
-      <div className="flex gap-2 border-b pb-2 overflow-x-auto">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} className="h-9 w-24 rounded-md" />
-        ))}
+    <div className="flex flex-col gap-6 pb-20">
+      {/* Header Skeleton */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <Skeleton className="h-8 w-48" />
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Skeleton className="h-10 flex-1 sm:w-32" />
+          <Skeleton className="h-10 flex-1 sm:w-32" />
+        </div>
       </div>
 
-      {/* Overview Tab Content Skeleton */}
-      <div className="space-y-6">
-        {/* Balance Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <Skeleton className="h-4 w-24" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-32 mb-2" />
-              <Skeleton className="h-3 w-20" />
-            </CardContent>
-          </Card>
+      {/* Tabs Skeleton */}
+      <div className="w-full">
+        <div className="grid w-full grid-cols-2 lg:w-[400px] mb-6">
+          <Skeleton className="h-10 rounded-md" />
+          <Skeleton className="h-10 rounded-md ml-2" />
         </div>
 
-        {/* Recent Transactions */}
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-40" />
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-10 w-10 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-24" />
-                  </div>
-                </div>
-                <Skeleton className="h-5 w-24" />
-              </div>
-            ))}
-          </div>
+        {/* Content Grid Skeleton */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Card key={i} className="shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-4 w-4 rounded-full" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-40 mb-2" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-9 w-full mt-4" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </div>

@@ -3,12 +3,16 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function SettingsSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4 pb-20">
+      <Skeleton className="h-8 w-48 mb-4" />
+      
       {/* Tabs List Skeleton */}
-      <div className="flex gap-2 mb-6">
-        <Skeleton className="h-10 w-32 rounded-md" />
-        <Skeleton className="h-10 w-24 rounded-md" />
-        <Skeleton className="h-10 w-28 rounded-md" />
+      <div className="w-full overflow-x-auto pb-2">
+        <div className="flex gap-2 min-w-max">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-10 w-32 rounded-md" />
+          ))}
+        </div>
       </div>
 
       {/* Settings Content Skeleton */}

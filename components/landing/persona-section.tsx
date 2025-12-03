@@ -8,8 +8,8 @@ const personas = [
   {
     icon: GraduationCap,
     title: "Mahasiswa",
-    description: "Kelola budget semester, lacak pengeluaran kuliah, dan rencanakan tugas dengan efektif.",
-    features: ["Budget Semester", "Tracking Pengeluaran", "Task Planning"],
+    description: "Kelola budget semester dan lacak pengeluaran kuliah dengan efektif.",
+    features: ["Budget Semester", "Tracking Pengeluaran", "Savings Goals"],
     color: "from-blue-500 to-cyan-500"
   },
   {
@@ -22,8 +22,8 @@ const personas = [
   {
     icon: Laptop,
     title: "Freelancer",
-    description: "Lacak project, hitung nilai waktu, dan kelola income dari berbagai sumber.",
-    features: ["Project Tracking", "Time Value Calculator", "Multi-Income"],
+    description: "Lacak income dari berbagai sumber dan hitung nilai waktu Anda.",
+    features: ["Income Tracking", "Time Value Calculator", "Multi-Income"],
     color: "from-orange-500 to-red-500"
   }
 ];

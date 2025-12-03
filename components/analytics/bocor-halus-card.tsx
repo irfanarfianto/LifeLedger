@@ -10,20 +10,20 @@ interface BocorHalusCardProps {
 
 export function BocorHalusCard({ items }: BocorHalusCardProps) {
   return (
-    <Card className="h-full border-orange-200 bg-orange-50/30 dark:bg-orange-950/10 dark:border-orange-900">
+    <Card className="shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-400">
-          <Droplets className="h-5 w-5" />
+        <CardTitle className="flex items-center gap-2 text-base font-semibold">
+          <Droplets className="h-4 w-4 text-orange-500" />
           Bocor Halus
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Pengeluaran kecil yang sering terjadi dan menguras dompetmu.
+          Pengeluaran kecil yang sering terjadi.
         </p>
       </CardHeader>
       <CardContent>
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground text-sm">
-            <p>Aman! Tidak ada kebocoran terdeteksi.</p>
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground text-xs">
+            <p>Aman! Tidak ada kebocoran.</p>
           </div>
         ) : (
           <div className="space-y-4">

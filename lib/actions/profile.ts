@@ -105,7 +105,7 @@ export async function deleteAccount(email: string) {
   await Promise.allSettled([
     supabaseAdmin.from('wallets').delete().eq('user_id', user.id),
     supabaseAdmin.from('categories').delete().eq('user_id', user.id),
-    supabaseAdmin.from('tasks').delete().eq('user_id', user.id),
+
     supabaseAdmin.from('subscriptions').delete().eq('user_id', user.id),
     supabaseAdmin.from('wishlists').delete().eq('user_id', user.id),
     supabaseAdmin.from('debts').delete().eq('user_id', user.id),

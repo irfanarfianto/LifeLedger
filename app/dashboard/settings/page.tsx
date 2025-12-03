@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ReminderSettings } from "@/components/settings/reminder-settings";
 import { getReminders } from "@/lib/actions/reminders";
 
+import { ThemeToggle } from "@/components/theme-toggle";
+
 async function SettingsContent() {
   const [profile, categories, subscriptions, reminders] = await Promise.all([
     getUserProfile(),
@@ -60,6 +62,17 @@ async function SettingsContent() {
               <p className="text-sm text-muted-foreground">
                 Email: <span className="font-medium text-foreground">{profile?.email || "Tidak tersedia"}</span>
               </p>
+            </div>
+
+            {/* Mobile-only Theme Settings */}
+            <div className="md:hidden pt-4 border-t">
+               <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Tampilan</p>
+                    <p className="text-sm text-muted-foreground">Sesuaikan tema aplikasi</p>
+                  </div>
+                  <ThemeToggle />
+               </div>
             </div>
             <div className="pt-4 border-t">
               <LogoutButton />

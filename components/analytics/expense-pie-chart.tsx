@@ -12,9 +12,9 @@ export function ExpensePieChart({ data }: ExpensePieChartProps) {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle>Pengeluaran per Kategori</CardTitle>
+    <Card className="h-full shadow-sm">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-lg font-semibold">Pengeluaran per Kategori</CardTitle>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
@@ -29,13 +29,13 @@ export function ExpensePieChart({ data }: ExpensePieChartProps) {
                   data={data}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
+                  innerRadius={60}
                   outerRadius={80}
-                  fill="#8884d8"
+                  paddingAngle={5}
                   dataKey="value"
                 >
                   {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} strokeWidth={0} />
                   ))}
                 </Pie>
                 <Tooltip 

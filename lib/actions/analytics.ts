@@ -105,3 +105,88 @@ export async function getBocorHalus() {
 
   return result;
 }
+
+export async function getCashFlowData(range: "daily" | "weekly" | "monthly" = "monthly") {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("User not authenticated");
+
+  const now = new Date();
+  const startDate = new Date();
+  
+  // Determine start date based on range
+  if (range === "daily") {
+    startDate.setDate(now.getDate() - 30);
+  } else if (range === "weekly") {
+    startDate.setDate(now.getDate() - (7 * 12)); // Last 12 weeks
+  } else {
+    startDate.setMonth(now.getMonth() - 11); // Last 12 months
+    startDate.setDate(1);
+  }
+
+  const { data: transactions, error } = await supabase
+    .from("transactions")
+    .select("amount, transaction_type, created_at")
+    .eq("user_id", user.id)
+    .gte("created_at", startDate.toISOString())
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching cash flow data:", error);
+    return [];
+  }
+
+  // Helper to format date keys
+  const formatDateKey = (date: Date) => {
+    if (range === "daily") {
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    } else if (range === "weekly") {
+      // Get start of week
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is sunday
+      d.setDate(diff);
+      return `Minggu ${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}`;
+    } else {
+      return date.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
+    }
+  };
+
+  // Initialize map with all dates in range to ensure continuous line
+  const dataMap = new Map<string, { date: string, income: number, expense: number }>();
+  
+  const currentDate = new Date(startDate);
+  while (currentDate <= now) {
+    const key = formatDateKey(currentDate);
+    if (!dataMap.has(key)) {
+      dataMap.set(key, { date: key, income: 0, expense: 0 });
+    }
+    
+    // Increment
+    if (range === "daily") {
+      currentDate.setDate(currentDate.getDate() + 1);
+    } else if (range === "weekly") {
+      currentDate.setDate(currentDate.getDate() + 7);
+    } else {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+  }
+
+  // Fill with actual data
+  transactions.forEach(curr => {
+    const date = new Date(curr.created_at);
+    const key = formatDateKey(date);
+    
+    if (dataMap.has(key)) {
+      const entry = dataMap.get(key)!;
+      if (curr.transaction_type === 'income') {
+        entry.income += curr.amount;
+      } else {
+        entry.expense += curr.amount;
+      }
+    }
+  });
+
+  return Array.from(dataMap.values());
+}

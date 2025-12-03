@@ -1,12 +1,11 @@
 "use client";
 
 import {
-  Calendar,
   LayoutDashboard,
   Settings,
   Wallet,
-  CheckSquare,
-  PieChart,
+  ArrowLeftRight,
+  Target,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,19 +33,19 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Keuangan",
-    url: "/dashboard/finance",
+    title: "Transaksi",
+    url: "/dashboard/transactions",
+    icon: ArrowLeftRight,
+  },
+  {
+    title: "Dompet",
+    url: "/dashboard/wallets",
     icon: Wallet,
   },
   {
-    title: "Tugas",
-    url: "/dashboard/tasks",
-    icon: CheckSquare,
-  },
-  {
-    title: "Analitik",
-    url: "/dashboard/analytics",
-    icon: PieChart,
+    title: "Target",
+    url: "/dashboard/wishlist",
+    icon: Target,
   },
   {
     title: "Pengaturan",

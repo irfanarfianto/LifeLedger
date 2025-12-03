@@ -1,23 +1,25 @@
 import { Suspense } from "react";
 import { GreetingCard } from "@/components/dashboard/greeting-card";
-import { BalanceCard } from "@/components/dashboard/balance-card";
-import { PomodoroWidget } from "@/components/dashboard/pomodoro-widget";
-import { FocusTasks } from "@/components/dashboard/focus-tasks";
 import { OnboardingDialog } from "@/components/dashboard/onboarding-dialog";
-import { QuickStats } from "@/components/dashboard/quick-stats";
+import { FinancialOverview } from "@/components/dashboard/quick-stats";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { WishlistProgress } from "@/components/dashboard/wishlist-progress";
+import { CashFlowChart } from "@/components/dashboard/cash-flow-chart";
+import { ExpensePieChart } from "@/components/analytics/expense-pie-chart";
+import { BocorHalusCard } from "@/components/analytics/bocor-halus-card";
 import { getWallets, getTransactions, getWishlists } from "@/lib/actions/finance";
-import { getFocusTasks } from "@/lib/actions/tasks";
+import { getCashFlowData, getExpensesByCategory, getBocorHalus } from "@/lib/actions/analytics";
 import { getUserProfile } from "@/lib/actions/profile";
 
 async function DashboardContent() {
-  const [wallets, transactions, focusTasks, profile, wishlists] = await Promise.all([
+  const [wallets, transactions, profile, wishlists, cashFlowData, expensesByCategory, bocorHalusItems] = await Promise.all([
     getWallets(),
     getTransactions(),
-    getFocusTasks(),
     getUserProfile(),
     getWishlists(),
+    getCashFlowData(),
+    getExpensesByCategory(),
+    getBocorHalus(),
   ]);
 
   const totalBalance = wallets.reduce((sum, wallet) => sum + Number(wallet.current_balance), 0);
@@ -32,39 +34,45 @@ async function DashboardContent() {
   const monthlyExpense = monthlyTransactions
     .filter(t => t.transaction_type === 'expense')
     .reduce((sum, t) => sum + Number(t.amount), 0);
-  const upcomingTasks = focusTasks.filter(t => t.status !== 'completed').length;
+
 
   return (
     <div className="flex flex-col gap-6 pb-20">
       <OnboardingDialog currentRole={profile?.role} />
       
-      {/* Greeting and Balance */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="col-span-full md:col-span-2 lg:col-span-3">
-          <GreetingCard userName={profile?.full_name} />
-        </div>
-        <BalanceCard totalBalance={totalBalance} />
+      {/* Header & Stats */}
+      <div className="space-y-6">
+        <GreetingCard userName={profile?.full_name} />
+        <FinancialOverview 
+          totalBalance={totalBalance}
+          monthlyIncome={monthlyIncome}
+          monthlyExpense={monthlyExpense}
+        />
       </div>
 
-      {/* Quick Stats */}
-      <QuickStats 
-        monthlyIncome={monthlyIncome}
-        monthlyExpense={monthlyExpense}
-        upcomingTasks={upcomingTasks}
-      />
-
-      {/* Main Content */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="md:col-span-1 lg:col-span-2">
-          <FocusTasks initialTasks={focusTasks} />
+      {/* Unified Dashboard Grid */}
+      <div className="grid gap-6 md:grid-cols-6">
+        {/* Cash Flow Chart (Top Left - 66%) */}
+        <div className="md:col-span-4 min-w-0">
+          <CashFlowChart data={cashFlowData} />
         </div>
-        <div className="space-y-4">
+
+        {/* Expense Chart (Top Right - 33%) */}
+        <div className="md:col-span-2 min-w-0">
+          <ExpensePieChart data={expensesByCategory} />
+        </div>
+
+        {/* Recent Activity (Bottom Left - 66%) */}
+        <div className="md:col-span-4 min-w-0">
           <RecentActivity transactions={transactions} />
+        </div>
+
+        {/* Side Content (Bottom Right - 33%) */}
+        <div className="md:col-span-2 space-y-6 min-w-0">
           <WishlistProgress wishlists={wishlists} />
+          <BocorHalusCard items={bocorHalusItems} />
         </div>
       </div>
-
-      <PomodoroWidget />
     </div>
   );
 }

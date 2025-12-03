@@ -299,6 +299,34 @@ export async function createWishlist(formData: FormData) {
   revalidatePath("/dashboard/finance");
 }
 
+export async function updateWishlist(id: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("User not authenticated");
+
+  const itemName = formData.get("item_name") as string;
+  const targetAmount = parseFloat(formData.get("target_amount") as string);
+  const targetDate = formData.get("target_date") as string || null;
+
+  const { error } = await supabase
+    .from("wishlists")
+    .update({
+      item_name: itemName,
+      target_amount: targetAmount,
+      target_date: targetDate,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error updating wishlist:", error);
+    throw new Error("Failed to update wishlist");
+  }
+
+  revalidatePath("/dashboard/finance");
+}
+
 export async function deleteWishlist(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

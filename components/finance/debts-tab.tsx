@@ -1,7 +1,6 @@
 "use client";
 
 import { Debt, markDebtAsPaid } from "@/lib/actions/finance";
-import { CreateDebtDialog } from "./create-debt-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowUpRight, ArrowDownLeft } from "lucide-react";
@@ -25,10 +24,6 @@ export function DebtsTab({ debts }: DebtsTabProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Hutang & Piutang</h2>
-        <CreateDebtDialog />
-      </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {debts.length === 0 ? (
           <div className="col-span-full p-8 text-center border rounded-lg border-dashed text-muted-foreground">

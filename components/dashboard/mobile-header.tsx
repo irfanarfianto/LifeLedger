@@ -12,43 +12,42 @@ const helpContent: Record<string, { title: string; description: string; tips: st
     description: "Halaman utama untuk melihat ringkasan aktivitas Anda.",
     tips: [
       "Lihat saldo total Anda di kartu Balance",
-      "Fokus pada tugas prioritas tinggi di bagian 'Fokus Hari Ini'",
-      "Gunakan Pomodoro timer untuk meningkatkan produktivitas",
-      "Klik icon gear di Pomodoro untuk custom waktu fokus"
+
     ]
   },
-  "/dashboard/finance": {
-    title: "Keuangan",
-    description: "Kelola semua aspek keuangan Anda dalam satu tempat.",
+  "/dashboard/transactions": {
+    title: "Transaksi",
+    description: "Kelola pemasukan dan pengeluaran Anda.",
     tips: [
-      "Tab 'Ringkasan & Transaksi': Lihat semua transaksi dan tambah transaksi baru",
-      "Tab 'Dompet': Kelola berbagai dompet (tunai, bank, e-wallet, investasi)",
-      "Tab 'Keinginan': Catat barang yang ingin dibeli dan lacak progressnya",
-      "Tab 'Hutang': Catat hutang piutang agar tidak lupa",
-      "Gunakan tombol '+' untuk menambah transaksi cepat"
+      "Lihat riwayat transaksi Anda",
+      "Gunakan filter untuk mencari transaksi tertentu",
+      "Tambah transaksi baru dengan tombol '+'",
+      "Kategorikan transaksi untuk analisis yang lebih baik"
     ]
   },
-  "/dashboard/tasks": {
-    title: "Perencana (Planner)",
-    description: "Rencanakan dan kelola tugas Anda dengan efektif.",
+  "/dashboard/wallets": {
+    title: "Dompet",
+    description: "Kelola sumber dana Anda.",
     tips: [
-      "Tab 'Kalender': Lihat tugas berdasarkan tanggal",
-      "Tab 'Eisenhower Matrix': Prioritaskan tugas berdasarkan urgensi dan kepentingan",
-      "Brain Dump: Tulis ide atau tugas yang terlintas di pikiran",
-      "Habit Tracker: Lacak kebiasaan harian Anda",
-      "Tandai tugas sebagai urgent untuk highlight merah"
+      "Tambah dompet baru (Bank, E-Wallet, Tunai)",
+      "Lihat saldo per dompet",
+      "Transfer antar dompet jika diperlukan",
+      "Pastikan saldo sesuai dengan kenyataan"
     ]
   },
-  "/dashboard/analytics": {
-    title: "Analitik & Laporan",
-    description: "Analisis pola keuangan dan produktivitas Anda.",
+  "/dashboard/wishlist": {
+    title: "Target Keuangan",
+    description: "Rencanakan pembelian impian Anda.",
     tips: [
-      "Expense Pie Chart: Lihat distribusi pengeluaran per kategori",
-      "Cost of Time Calculator: Hitung nilai waktu Anda (untuk pekerja/freelancer)",
-      "Bocor Halus: Deteksi pengeluaran kecil yang sering terlupakan",
-      "Gunakan insight untuk membuat keputusan finansial lebih baik"
+      "Buat target tabungan untuk barang impian",
+      "Alokasikan dana ke target tertentu",
+      "Pantau progress tabungan Anda",
+      "Prioritaskan target yang paling penting"
     ]
   },
+
+
+
   "/dashboard/settings": {
     title: "Pengaturan",
     description: "Kelola profil dan preferensi aplikasi Anda.",
