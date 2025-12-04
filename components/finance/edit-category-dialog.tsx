@@ -89,7 +89,7 @@ export function EditCategoryDialog({ category, open, onOpenChange }: EditCategor
                 Tipe
               </Label>
               <div className="col-span-3">
-                <Select name="type" required value={type} onValueChange={setType}>
+                <Select name="type" required value={type} onValueChange={(value) => setType(value as "expense" | "income")}>
                   <SelectTrigger>
                     <SelectValue placeholder="Pilih tipe" />
                   </SelectTrigger>
