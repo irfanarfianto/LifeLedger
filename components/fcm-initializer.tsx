@@ -6,6 +6,8 @@ import { getToken } from "firebase/messaging";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 
+import { toast } from "sonner";
+
 export function FCMInitializer() {
   const [permission, setPermission] = useState<NotificationPermission>("default");
   const [user, setUser] = useState<User | null>(null);
@@ -35,10 +37,26 @@ export function FCMInitializer() {
     async function initializeFCM() {
       if (typeof window === "undefined" || !("Notification" in window)) return;
 
+      // Check for Secure Context (HTTPS or localhost)
+      if (!window.isSecureContext) {
+        console.warn("FCM: App not in Secure Context. Notifications require HTTPS.");
+        return;
+      }
+
       if (permission === "default") {
-        console.log("FCM: Requesting permission...");
-        const result = await Notification.requestPermission();
-        setPermission(result);
+        // Mobile browsers block auto-request. Show a toast to get User Gesture.
+        toast("Aktifkan notifikasi?", {
+          description: "Dapatkan pengingat untuk menabung.",
+          action: {
+            label: "Ya, Aktifkan",
+            onClick: async () => {
+              console.log("FCM: Requesting permission via User Gesture...");
+              const result = await Notification.requestPermission();
+              setPermission(result);
+            }
+          },
+          duration: 8000,
+        });
         return;
       }
 
