@@ -56,8 +56,14 @@ export function FCMInitializer() {
               registration = await navigator.serviceWorker.ready;
             }
 
+            const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+            if (!vapidKey) {
+              console.warn("FCM: VAPID key is missing. Skipping FCM initialization.");
+              return;
+            }
+
             const token = await getToken(msg, {
-              vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+              vapidKey,
               serviceWorkerRegistration: registration,
             });
 
@@ -83,7 +89,11 @@ export function FCMInitializer() {
             }
           }
         } catch (error) {
-          console.error("FCM: Initialization failed:", error);
+          if (error instanceof Error && error.message.includes("Registration failed - push service error")) {
+            console.warn("FCM: Push notifications are blocked by the browser (common in Brave). Enable 'Use Google Services for Push Messaging' in Brave settings to fix.");
+          } else {
+            console.error("FCM: Initialization failed:", error);
+          }
         }
       }
     }

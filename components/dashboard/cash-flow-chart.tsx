@@ -63,6 +63,11 @@ export function CashFlowChart({ data: initialData }: CashFlowChartProps) {
   const [data, setData] = useState<CashFlowData[]>(initialData);
   const [range, setRange] = useState<"daily" | "weekly" | "monthly">("monthly");
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,6 +99,8 @@ export function CashFlowChart({ data: initialData }: CashFlowChartProps) {
       fetchData();
     }
   }, [range]);
+
+  if (!mounted) return <Card className="shadow-sm h-full"><CardContent className="h-[250px] flex items-center justify-center">Loading...</CardContent></Card>;
 
   return (
     <Card className="shadow-sm h-full">

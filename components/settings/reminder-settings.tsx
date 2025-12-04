@@ -63,8 +63,14 @@ export function ReminderSettings({ initialReminders }: { initialReminders: Savin
             registration = await navigator.serviceWorker.ready;
           }
 
+          const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+          if (!vapidKey) {
+            console.warn("FCM: VAPID key is missing. Skipping manual FCM initialization.");
+            return;
+          }
+
           const token = await getToken(msg, {
-            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+            vapidKey,
             serviceWorkerRegistration: registration,
           });
 
@@ -83,7 +89,11 @@ export function ReminderSettings({ initialReminders }: { initialReminders: Savin
         }
       }
     } catch (error) {
-      console.error("Manual FCM initialization failed:", error);
+      if (error instanceof Error && error.message.includes("Registration failed - push service error")) {
+        console.warn("Manual FCM initialization failed: Blocked by browser (likely Brave).");
+      } else {
+        console.error("Manual FCM initialization failed:", error);
+      }
     }
   };
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { CategoryExpense } from "@/lib/actions/analytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
@@ -10,6 +11,13 @@ interface ExpensePieChartProps {
 
 export function ExpensePieChart({ data }: ExpensePieChartProps) {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <Card className="h-full shadow-sm"><CardContent className="h-[300px] flex items-center justify-center">Loading...</CardContent></Card>;
 
   return (
     <Card className="h-full shadow-sm">
