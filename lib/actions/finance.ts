@@ -145,6 +145,38 @@ export async function createCategory(formData: FormData) {
   revalidatePath("/dashboard/finance");
 }
 
+export async function updateCategory(id: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const name = formData.get("name") as string;
+  const type = formData.get("type") as string;
+  const budgetLimit = parseFloat(formData.get("budget_limit") as string) || 0;
+  const icon = formData.get("icon") as string || null;
+
+  const { error } = await supabase
+    .from("categories")
+    .update({
+      name,
+      type,
+      budget_limit: budgetLimit,
+      icon,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error updating category:", error);
+    throw new Error("Failed to update category");
+  }
+
+  revalidatePath("/dashboard/finance");
+}
+
 export async function deleteCategory(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -463,6 +495,7 @@ export type Debt = {
   type: "i_owe" | "they_owe";
   is_paid: boolean;
   note: string | null;
+  due_date: string | null;
 };
 
 export async function getDebts() {
@@ -492,6 +525,7 @@ export async function createDebt(formData: FormData) {
   const amount = parseFloat(formData.get("amount") as string);
   const type = formData.get("type") as "i_owe" | "they_owe";
   const note = formData.get("note") as string || null;
+  const dueDate = formData.get("due_date") as string || null;
 
   const { error } = await supabase.from("debts").insert({
     user_id: user.id,
@@ -500,6 +534,7 @@ export async function createDebt(formData: FormData) {
     type,
     note,
     is_paid: false,
+    due_date: dueDate,
   });
 
   if (error) {

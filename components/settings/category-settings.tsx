@@ -3,10 +3,12 @@
 import { Category, deleteCategory, createDefaultCategories } from "@/lib/actions/finance";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, Plus, Wand2 } from "lucide-react";
+import { Trash2, Plus, Wand2, Pencil } from "lucide-react";
 import { CreateCategoryDialog } from "@/components/finance/create-category-dialog";
+import { EditCategoryDialog } from "@/components/finance/edit-category-dialog";
 import { toast } from "sonner";
 import { useState } from "react";
+import { formatRupiah } from "@/lib/utils/currency";
 
 interface CategorySettingsProps {
   categories: Category[];
@@ -15,6 +17,7 @@ interface CategorySettingsProps {
 export function CategorySettings({ categories }: CategorySettingsProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   const handleGenerateDefaults = async () => {
     setIsGenerating(true);
@@ -74,23 +77,46 @@ export function CategorySettings({ categories }: CategorySettingsProps) {
                 <div className="flex items-center gap-3">
                   <div className={`w-3 h-3 rounded-full ${category.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`} />
                   <div>
-                    <p className="font-medium">{category.name}</p>
+                    <p className="font-medium flex items-center gap-2">
+                      {category.name}
+                      {category.budget_limit > 0 && (
+                        <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded-full text-muted-foreground">
+                          Limit: {formatRupiah(category.budget_limit)}
+                        </span>
+                      )}
+                    </p>
                     <p className="text-xs text-muted-foreground capitalize">{category.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  onClick={() => handleDelete(category.id)}
-                  disabled={isLoading === category.id}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => setEditingCategory(category)}
+                  >
+                    <Pencil className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => handleDelete(category.id)}
+                    disabled={isLoading === category.id}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))
           )}
         </div>
+        {editingCategory && (
+          <EditCategoryDialog 
+            category={editingCategory} 
+            open={!!editingCategory} 
+            onOpenChange={(open) => !open && setEditingCategory(null)} 
+          />
+        )}
       </CardContent>
     </Card>
   );

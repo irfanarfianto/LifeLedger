@@ -24,11 +24,22 @@ import { createDebt } from "@/lib/actions/finance";
 import { toast } from "sonner";
 import { Plus, Loader2 } from "lucide-react";
 import { CurrencyInput } from "@/components/ui/currency-input";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 export function CreateDebtDialog() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [type, setType] = useState("they_owe");
+  const [date, setDate] = useState<Date>();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -120,6 +131,38 @@ export function CreateDebtDialog() {
                 className="col-span-3"
               />
             </div>
+            {type === "i_owe" && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">
+                  Jatuh Tempo
+                </Label>
+                <div className="col-span-3">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !date && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {date ? format(date, "PPP", { locale: id }) : <span>Pilih tanggal</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <input type="hidden" name="due_date" value={date ? date.toISOString() : ""} />
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>

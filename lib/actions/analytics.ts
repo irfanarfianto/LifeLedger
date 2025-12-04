@@ -190,3 +190,154 @@ export async function getCashFlowData(range: "daily" | "weekly" | "monthly" = "m
 
   return Array.from(dataMap.values());
 }
+
+export type BudgetProgressItem = {
+  categoryName: string;
+  spent: number;
+  limit: number;
+  percentage: number;
+  color: string;
+};
+
+export async function getBudgetProgress() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("User not authenticated");
+
+  // 1. Get all expense categories with budget limits > 0
+  const { data: categories, error: catError } = await supabase
+    .from("categories")
+    .select("id, name, budget_limit")
+    .eq("user_id", user.id)
+    .eq("type", "expense")
+    .gt("budget_limit", 0);
+
+  if (catError) {
+    console.error("Error fetching categories for budget:", catError);
+    return [];
+  }
+
+  if (!categories || categories.length === 0) return [];
+
+  // 2. Get expenses for current month
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+
+  const { data: transactions, error: transError } = await supabase
+    .from("transactions")
+    .select("amount, category_id")
+    .eq("user_id", user.id)
+    .eq("transaction_type", "expense")
+    .gte("created_at", startOfMonth)
+    .lte("created_at", endOfMonth);
+
+  if (transError) {
+    console.error("Error fetching transactions for budget:", transError);
+    return [];
+  }
+
+  // 3. Calculate spent per category
+  const spentMap = new Map<string, number>();
+  transactions.forEach(t => {
+    if (t.category_id) {
+      const current = spentMap.get(t.category_id) || 0;
+      spentMap.set(t.category_id, current + t.amount);
+    }
+  });
+
+  // 4. Combine data
+  const result: BudgetProgressItem[] = categories.map((cat, index) => {
+    const spent = spentMap.get(cat.id) || 0;
+    const percentage = Math.min((spent / cat.budget_limit) * 100, 100);
+    
+    return {
+      categoryName: cat.name,
+      spent,
+      limit: cat.budget_limit,
+      percentage,
+      color: `hsl(var(--chart-${(index % 5) + 1}))`,
+    };
+  }).sort((a, b) => b.percentage - a.percentage);
+
+  return result;
+}
+
+export type CalendarEvent = {
+  id: string;
+  title: string;
+  date: Date;
+  amount: number;
+  type: "subscription" | "debt_payment";
+  isPaid: boolean;
+};
+
+export async function getCalendarEvents() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("User not authenticated");
+
+  const events: CalendarEvent[] = [];
+
+  // 1. Get Subscriptions
+  const { data: subscriptions, error: subError } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("is_active", true);
+
+  if (!subError && subscriptions) {
+    const now = new Date();
+    // Generate events for current month and next month
+    [0, 1].forEach(monthOffset => {
+      const targetMonth = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+      
+      subscriptions.forEach(sub => {
+        const eventDate = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), sub.due_date_day);
+        
+        // Handle invalid dates (e.g., Feb 30)
+        if (eventDate.getMonth() !== targetMonth.getMonth()) {
+          // Set to last day of month
+          eventDate.setDate(0); 
+        }
+
+        events.push({
+          id: `sub-${sub.id}-${monthOffset}`,
+          title: `Tagihan: ${sub.name}`,
+          date: eventDate,
+          amount: sub.cost,
+          type: "subscription",
+          isPaid: false, // Subscriptions are recurring, logic for "paid" this month is complex, assuming false for forecast
+        });
+      });
+    });
+  }
+
+  // 2. Get Debts (I Owe) with due dates
+  const { data: debts, error: debtError } = await supabase
+    .from("debts")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("type", "i_owe")
+    .eq("is_paid", false)
+    .not("due_date", "is", null);
+
+  if (!debtError && debts) {
+    debts.forEach(debt => {
+      if (debt.due_date) {
+        events.push({
+          id: `debt-${debt.id}`,
+          title: `Bayar Hutang: ${debt.person_name}`,
+          date: new Date(debt.due_date),
+          amount: debt.amount,
+          type: "debt_payment",
+          isPaid: false,
+        });
+      }
+    });
+  }
+
+  return events.sort((a, b) => a.date.getTime() - b.date.getTime());
+}

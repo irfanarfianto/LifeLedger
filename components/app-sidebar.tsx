@@ -6,6 +6,7 @@ import {
   Wallet,
   ArrowLeftRight,
   Target,
+  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,6 +47,11 @@ const items = [
     title: "Target",
     url: "/dashboard/wishlist",
     icon: Target,
+  },
+  {
+    title: "Kalender",
+    url: "/dashboard/calendar",
+    icon: CalendarDays,
   },
   {
     title: "Pengaturan",

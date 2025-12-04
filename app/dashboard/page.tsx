@@ -7,12 +7,13 @@ import { WishlistProgress } from "@/components/dashboard/wishlist-progress";
 import { CashFlowChart } from "@/components/dashboard/cash-flow-chart";
 import { ExpensePieChart } from "@/components/analytics/expense-pie-chart";
 import { BocorHalusCard } from "@/components/analytics/bocor-halus-card";
+import { BudgetProgressCard } from "@/components/analytics/budget-progress-card";
 import { getWallets, getTransactions, getWishlists } from "@/lib/actions/finance";
-import { getCashFlowData, getExpensesByCategory, getBocorHalus } from "@/lib/actions/analytics";
+import { getCashFlowData, getExpensesByCategory, getBocorHalus, getBudgetProgress } from "@/lib/actions/analytics";
 import { getUserProfile } from "@/lib/actions/profile";
 
 async function DashboardContent() {
-  const [wallets, transactions, profile, wishlists, cashFlowData, expensesByCategory, bocorHalusItems] = await Promise.all([
+  const [wallets, transactions, profile, wishlists, cashFlowData, expensesByCategory, bocorHalusItems, budgetProgress] = await Promise.all([
     getWallets(),
     getTransactions(),
     getUserProfile(),
@@ -20,6 +21,7 @@ async function DashboardContent() {
     getCashFlowData(),
     getExpensesByCategory(),
     getBocorHalus(),
+    getBudgetProgress(),
   ]);
 
   const totalBalance = wallets.reduce((sum, wallet) => sum + Number(wallet.current_balance), 0);
@@ -69,6 +71,7 @@ async function DashboardContent() {
 
         {/* Side Content (Bottom Right - 33%) */}
         <div className="md:col-span-2 space-y-6 min-w-0">
+          <BudgetProgressCard items={budgetProgress} />
           <WishlistProgress wishlists={wishlists} />
           <BocorHalusCard items={bocorHalusItems} />
         </div>

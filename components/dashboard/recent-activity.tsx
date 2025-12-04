@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight, ArrowLeftRight } from "lucide-react";
+import { TransactionIcon } from "@/components/ui/transaction-icon";
 import Link from "next/link";
 import { formatRupiah } from "@/lib/utils/currency";
 import type { Transaction } from "@/lib/actions/finance";
@@ -42,23 +42,17 @@ export function RecentActivity({ transactions }: RecentActivityProps) {
               const displayDate = new Date(transaction.transaction_date || transaction.created_at);
               const isValidDate = !isNaN(displayDate.getTime());
 
-              let icon, colorClass, textClass, sign, label;
+              let textClass, sign, label;
 
               if (type === 'income') {
-                icon = <ArrowUpRight className="h-4 w-4" />;
-                colorClass = "bg-green-100 text-green-600 dark:bg-green-900/20";
                 textClass = "text-green-600";
                 sign = "+";
                 label = "Pemasukan";
               } else if (type === 'transfer') {
-                icon = <ArrowLeftRight className="h-4 w-4" />;
-                colorClass = "bg-blue-100 text-blue-600 dark:bg-blue-900/20";
                 textClass = "text-blue-600";
                 sign = "";
                 label = "Transfer";
               } else {
-                icon = <ArrowDownRight className="h-4 w-4" />;
-                colorClass = "bg-red-100 text-red-600 dark:bg-red-900/20";
                 textClass = "text-red-600";
                 sign = "-";
                 label = "Pengeluaran";
@@ -70,11 +64,7 @@ export function RecentActivity({ transactions }: RecentActivityProps) {
                   className="flex items-center justify-between py-2 hover:bg-muted/50 transition-colors rounded-lg px-2 -mx-2"
                 >
                   <div className="flex items-center gap-3 overflow-hidden flex-1 min-w-0">
-                    <div
-                      className={`flex h-9 w-9 items-center justify-center rounded-full shrink-0 ${colorClass}`}
-                    >
-                      {icon}
-                    </div>
+                    <TransactionIcon type={type} />
                     <div className="space-y-0.5 min-w-0 flex-1">
                       <p className="text-sm font-medium leading-none truncate">
                         {transaction.note || label}
